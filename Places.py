@@ -4,6 +4,7 @@ class Base:
     def __init__(self, latitude : float, longitude : float, Name):
         self.Lat = ((latitude + 90) % 180 ) - 90
         self.Lon = ((longitude + 180) % 360 ) - 180 
+        self.Name = Name
     def DistanceTo(self, other):
         R = 6371 # Radius of Earth in KM
 

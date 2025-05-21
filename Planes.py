@@ -1,16 +1,80 @@
 import Places
 import Fleet
+import math
+import People
 
 class Plane:
     def __init__(self, ID, Base, Make, Model):
         self.ID = ID
         self.__StationedIn = Base
-        self.__Make = Make
-        self.__Model = Model
-    def Fly(self, destination: float):
-        print('Hi')
+        self.Make = Make
+        self.Model = Model
+        self.__Crew = People.Crew()
 
+        self.__Fuel = 0 # in litres
+        self.__CargoWeight = 0 # in kg
+        
+        self.MaxCargoWeight = 0  # in kg
+        self.MaxFuelCapacity = 0 # in K liters
+        self.MaxCrewSize = 0
+        self.AverageSpeed = 0
+        self.FuelConsumption = 0
+    def GetFullName(self):
+        return f'{self.Make} {self.Model} {self.ID}'
+    def Fly(self, Destination: float):
+        if self.__Crew.GetPilots() < 1:
+            print('No pilots have been assigned!')
+            return
+
+        OldStation = self.__StationedIn.Name
+        Traveled = self.__StationedIn.DistanceTo(Destination)
+        TimeEstimate = math.ceil(Traveled / self.AverageSpeed * 100) / 100
+        FuelNeeded = TimeEstimate * self.FuelConsumption
+
+        if (self.__Fuel - FuelNeeded) <= 0:
+            print(f'Not enough fuel! Needed (more than): {FuelNeeded}; Present: {self.__Fuel}.')
+            return
+
+        self.__Fuel -= FuelNeeded 
+        self.__Fuel = math.ceil(self.__Fuel * 10) / 10
+
+        if type(Destination) == type(self.__StationedIn):
+            self.__StationedIn = Destination
+            print(f'{self.GetFullName()} has flown {Traveled} KM from {OldStation} to {self.__StationedIn.Name} in {TimeEstimate} hours.')
+            print(f'{self.GetFullName()} is now stationed in {self.__StationedIn.Name}.')
+            print(f'{self.GetFullName()} fuel capacity has been decreased to {self.__Fuel} ({math.ceil(self.__Fuel / self.MaxFuelCapacity * 1000) / 1000 * 100}%) litres.\n')
+    def Refuel(self, amount):
+        if not amount > self.MaxFuelCapacity:
+            self.__Fuel = amount
+            print(f'{self.GetFullName()} has been refueled to {self.__Fuel} / {self.MaxFuelCapacity} ({math.ceil(self.__Fuel / self.MaxFuelCapacity * 1000) / 1000 * 100}%) litres.\n')
+        else:
+            print('Given amount exceeds fuel capacity.\n')
+    def AssignCrew(self, Crew : People.Crew):
+        if type(Crew) == type(self.__Crew):
+            TotalCrew = Crew.TotalCrew()
+
+            if TotalCrew <= self.MaxCrewSize:
+                self.__Crew = Crew
+                print(f'A crew of {TotalCrew} has been assigned to {self.ID}.')
+            else:
+                print('Crew size exceeds limits.')
+        else:
+            print('Incorrect type.')
+        
 class CargoPlane(Plane):
-    def __init__(self):
-        self.__CargoCapacity = 0
-        self.__CargoVolume = 0
+    def __init__(self, ID, Base, Make, Model):
+        super().__init__(ID, Base, Make, Model)
+        self.MaxCargoWeight = 120000  # in kg
+        self.MaxFuelCapacity = 200000 # in liters
+        self.MaxCrewSize = 20
+        self.AverageSpeed = 850 # in km/h
+        self.FuelConsumption = 10000 # in liters per hour
+        
+class Ultralight(Plane):
+    def __init__(self, ID, Base, Make, Model):
+        super().__init__(ID, Base, Make, Model)
+        self.MaxCargoWeight = 200 
+        self.MaxFuelCapacity = 50 
+        self.MaxCrewSize = 2       
+        self.AverageSpeed = 150    
+        self.FuelConsumption = 15  

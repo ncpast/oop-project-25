@@ -5,32 +5,38 @@ import People
 
 Airline = Fleet()
 
-Berlin = Base(52.52, 13.405, 'Berlin')  
-Paris = Base(48.8566, 2.3522, 'Paris')  
-Baghdad = Base(33.3152, 44.3661, 'Baghdad')
-Groenlo = Base(52.0420, 6.6114, 'Groenlo')
-Airline.NewBase(Berlin)
-Airline.NewBase(Paris)
-Airline.NewBase(Baghdad)
-Airline.NewBase(Groenlo)
+Airline.NewBase(52.52, 13.405, 'Berlin')
+Airline.NewBase(48.8566, 2.3522, 'Paris')
+Airline.NewBase(33.3152, 44.3661, 'Baghdad')
+Airline.NewBase(52.0420, 6.6114, 'Groenlo')
 
-CargoPlane = Planes.CargoPlane('A-333', Baghdad, 'Boeing', '747-8F')
+CargoPlane = Planes.CargoPlane('A-333', Airline.GetBase('Baghdad'), 'Boeing', '747-8F')
 Airline.NewPlane(CargoPlane)
 
 CargoCrew = People.Crew()
-CargoCrew.AssignPeople('FlightAttendant', 10)
-CargoCrew.AssignPeople('Pilot', 2)
+
+Passenger = People.Passenger('Richard', 'Roe')
+Pilot = People.Pilot('John', 'Doe')
+FlightAttendant = People.FlightAttendant('Jane', 'Doe')
+CargoCrew.AssignPeople('Pilot', Pilot)
+CargoCrew.AssignPeople('FlightAttendant', FlightAttendant)
 CargoPlane.AssignCrew(CargoCrew)
 
-CargoPlane.Refuel(65344)
-CargoPlane.Fly(Paris)
+Passenger.BoardFlight(CargoPlane) # Passengers can board flights by themselves after the crew has been assigned
+FlightAttendant.Serve(Passenger)
 
-Ultralight = Planes.Ultralight('A-402', Berlin, 'Makeshift', 'V1')
+print(CargoPlane.GetCrew().GetCrewMembers())
+
+CargoPlane.Refuel(65344)
+CargoPlane.LoadCargo(12625)
+CargoPlane.Fly(Airline.GetBase('Paris'))
+
+Ultralight = Planes.Ultralight('A-402', Airline.GetBase('Berlin'), 'Makeshift', 'V1')
 Airline.NewPlane(CargoPlane)
 
 UltralightCrew = People.Crew()
-UltralightCrew.AssignPeople('Pilot', 1)
+UltralightCrew.AssignPeople('Pilot', Pilot)
 Ultralight.AssignCrew(UltralightCrew)
 
 Ultralight.Refuel(50)
-Ultralight.Fly(Groenlo)
+Ultralight.Fly(Airline.GetBase('Groenlo'))

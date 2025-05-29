@@ -12,9 +12,7 @@ class Plane:
         self.__Crew = People.Crew()
 
         self.__Fuel = 0 # in litres
-        self.__CargoWeight = 0 # in kg
-        
-        self.MaxCargoWeight = 0  # in kg
+
         self.MaxFuelCapacity = 0 # in K liters
         self.MaxCrewSize = 0
         self.AverageSpeed = 0
@@ -42,7 +40,7 @@ class Plane:
             self.__StationedIn = Destination
             print(f'{self.GetFullName()} has flown {Traveled} KM from {OldStation} to {self.__StationedIn.Name} in {TimeEstimate} hours.')
             print(f'{self.GetFullName()} is now stationed in {self.__StationedIn.Name}.')
-            print(f'{self.GetFullName()} fuel capacity has been decreased to {self.__Fuel} ({math.ceil(self.__Fuel / self.MaxFuelCapacity * 1000) / 1000 * 100}%) litres.\n')
+            print(f'{self.GetFullName()} fuel capacity has been decreased to {self.__Fuel} ({math.ceil(self.__Fuel / self.MaxFuelCapacity * 1000) / 10}%) litres.\n')
     def Refuel(self, amount):
         if not amount > self.MaxFuelCapacity:
             self.__Fuel = amount
@@ -52,6 +50,11 @@ class Plane:
     def AssignCrew(self, Crew : People.Crew):
         if type(Crew) == type(self.__Crew):
             TotalCrew = Crew.TotalCrew()
+            CrewMembers = Crew.GetCrewMembers()
+            
+            for Type in CrewMembers:
+                for CrewMember in CrewMembers[Type]:
+                    CrewMember.Board(self)
 
             if TotalCrew <= self.MaxCrewSize:
                 self.__Crew = Crew
@@ -60,6 +63,8 @@ class Plane:
                 print('Crew size exceeds limits.')
         else:
             print('Incorrect type.')
+    def GetCrew(self):
+        return self.__Crew
         
 class CargoPlane(Plane):
     def __init__(self, ID, Base, Make, Model):
@@ -69,6 +74,15 @@ class CargoPlane(Plane):
         self.MaxCrewSize = 20
         self.AverageSpeed = 850 # in km/h
         self.FuelConsumption = 10000 # in liters per hour
+        self.__LoadedCargo = 0 # in kg
+    def LoadCargo(self, cargo):
+        CargoToLoad = cargo + self.__LoadedCargo
+        if CargoToLoad <= self.MaxCargoWeight:
+            self.__LoadedCargo = CargoToLoad
+            print(f'{self.GetFullName()} has been loaded with {CargoToLoad} KG.')
+        else:
+            print('Given cargo weight exceeds limits.')
+
         
 class Ultralight(Plane):
     def __init__(self, ID, Base, Make, Model):

@@ -18,7 +18,22 @@ class Mechanic(Person):
     def Repair(self, Plane):
         print(f'{self.FullName()} has repaired {Plane.GetFullName()}.')
         Plane.Repair()
+
+class Refueler(Mechanic):
+    def __init__(self, Name, Surname):
+        super().__init__(Name, Surname)
+    def Repair(self, Plane):
+        print(f'{self.FullName()} has refueled {Plane.GetFullName()}.')
         Plane.Refuel(Plane.GetMaxFuelCap())
+
+class MechanicTeam():
+    def __init__(self):
+        self.__Team = []
+    def AssignToTeam(self, Mechanic : Mechanic):
+        self.__Team.append(Mechanic)
+    def Repair(self, Plane):
+        for Mechanic in self.__Team:
+            Mechanic.Repair(Plane)
     
 class FlightOccupant(Person):
     def __init__(self, Name, Surname, Type):

@@ -48,7 +48,12 @@ F16.Intercept(CargoPlane)
 F16.Engage(Ultralight)
 
 Mechanic = People.Mechanic('Joe', 'Schmo')
+Refueler = People.Refueler('John', 'Smith')
+
+MechanicTeam = People.MechanicTeam()
+MechanicTeam.AssignToTeam(Mechanic)
+MechanicTeam.AssignToTeam(Refueler)
 
 Ultralight.Fly(Airline.GetBase('Berlin'))
-Mechanic.Repair(Ultralight)
+MechanicTeam.Repair(Ultralight)
 Ultralight.Fly(Airline.GetBase('Berlin'))

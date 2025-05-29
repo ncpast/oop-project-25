@@ -12,6 +12,14 @@ class Person:
     def GetBoardedPlane(self):
         return self.__Boarded
     
+class Mechanic(Person):
+    def __init__(self, Name, Surname):
+        super().__init__(Name, Surname)
+    def Repair(self, Plane):
+        print(f'{self.FullName()} has repaired {Plane.GetFullName()}.')
+        Plane.Repair()
+        Plane.Refuel(Plane.GetMaxFuelCap())
+    
 class FlightOccupant(Person):
     def __init__(self, Name, Surname, Type):
         super().__init__(Name, Surname)
